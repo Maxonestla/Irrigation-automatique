@@ -3,7 +3,7 @@
 #define SM2_PIN A1
 
 //Relay pin
-#define R_PIN D0
+#define R_PIN 2
 
 uint8_t get_humidity(uint8_t PIN);
 
@@ -18,10 +18,11 @@ const uint8_t sm1_rate = 50;
 const uint8_t sm2_rate = 50;
 
 void setup() {
-  // put your setup code here, to run once:
   pinMode(SM1_PIN, INPUT);
   pinMode(SM2_PIN, INPUT);
-  //pinMode(D0, OUTPUT);
+  pinMode(R_PIN, OUTPUT);
+  //Valve is closed at high input and opened at low input
+  digitalWrite(R_PIN, HIGH);
   Serial.begin(9600);
 }
 
@@ -37,7 +38,7 @@ void loop() {
     Serial.println(" : valeur ADC");
     if( sensorValue1 < sm1_rate){
       ev_open = true;
-      digitalWrite(R_PIN, HIGH);
+      digitalWrite(R_PIN, LOW);
       Serial.println("Pas assez d'humidité, on ouvre la vanne");
     }
   }
@@ -48,11 +49,11 @@ void loop() {
     Serial.println("% d'humidité par le capteur du bas");
     if( sensorValue2 > sm2_rate){
       ev_open=false;
-      digitalWrite(R_PIN, LOW);
+      digitalWrite(R_PIN, HIGH);
       Serial.println("Le sol est assez humide, on ferme la vanne");
     }
   }
-  delay(2000);
+  delay(5000);
 }
 
 uint8_t get_humidity(uint8_t PIN){
